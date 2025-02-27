@@ -1,0 +1,24 @@
+{
+    "name": "Day Phase",
+    "shortName": "Day Phase",
+    "version": "0.01",
+    "description": "Shows time, date, and a progress bar indicating the current phase of the day",
+    "icon": "app.png",
+    "type": "clock",
+    "tags": "clock,tool",
+    "supports": [
+        "BANGLEJS2"
+    ],
+    "readme": "README.md",
+    "storage": [
+        {
+            "name": "day-phase.app.js",
+            "url": "day-phase.js"
+        },
+        {
+            "name": "day-phase.img",
+            "url": "app-icon.js",
+            "evaluate": true
+        }
+    ]
+}
