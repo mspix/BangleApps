@@ -15,11 +15,12 @@ const dayPhases = [
   { name: "Sleep", startHour: 0, startMin: 0, color: "#006400" },       // Dark green
   { name: "Morning Routine", startHour: 7, startMin: 0, color: "#90EE90" }, // Light green
   { name: "Focus", startHour: 9, startMin: 0, color: "#ADD8E6" },       // Light blue
-  { name: "Break", startHour: 12, startMin: 0, color: "#FFA500" },      // Orange
+  { name: "Pause", startHour: 12, startMin: 0, color: "#FFA500" },      // Orange
   { name: "Focus", startHour: 13, startMin: 0, color: "#ADD8E6" },      // Light blue
-  { name: "Break", startHour: 18, startMin: 0, color: "#FFA500" },      // Orange
+  { name: "Pause", startHour: 18, startMin: 0, color: "#FFA500" },      // Orange
+  { name: "Focus", startHour: 19, startMin: 0, color: "#ADD8E6" }, 
   { name: "Wind Down", startHour: 20, startMin: 0, color: "#FF7F7F" },  // Light red
-  { name: "Sleep Prep", startHour: 21, startMin: 0, color: "#FF0000" }, // Red
+  { name: "Bed Time - Sleep", startHour: 21, startMin: 0, color: "#FF0000" }, // Red
   { name: "Sleep", startHour: 22, startMin: 0, color: "#006400" },      // Dark green
 ];
 
@@ -83,15 +84,17 @@ function drawProgressBar(date) {
   handlePhaseTransition(currentPhaseIndex);
   const progress = getPhaseProgress(date, currentPhaseIndex);
   
-  const barWidth = 140;  // Reduced width to fit screen better
-  const barHeight = 16;  // Slightly reduced height
-  const barY = 130;      // Adjusted Y position
+  const barWidth = 160;  // Increased from 140 to use more screen width
+  const barHeight = 16;
+  const barY = 130;
   const barX = (176 - barWidth) / 2; // Center horizontally
   
   g.clearRect(0, barY - 20, 176, barY + 50); // Clear the bar area and text
   
   // Draw the background for all phases
   let xPos = barX;
+  let totalWidth = 0; // Track total width to handle rounding errors
+  
   for (let i = 0; i < dayPhases.length; i++) {
     const nextIndex = (i + 1) % dayPhases.length;
     const phaseStart = phaseStartInMinutes(dayPhases[i]);
@@ -103,50 +106,39 @@ function drawProgressBar(date) {
       (nextPhaseStart - phaseStart);
     
     // Calculate width of this phase segment
-    const segmentWidth = Math.floor((phaseDuration / (24*60)) * barWidth);
+    let segmentWidth = Math.floor((phaseDuration / (24*60)) * barWidth);
     
-    // Draw the segment with reduced opacity if it's after current phase
+    // Adjust last segment to fill the bar completely
+    if (i === dayPhases.length - 1) {
+      segmentWidth = barWidth - totalWidth;
+    } else {
+      totalWidth += segmentWidth;
+    }
+    
+    // Draw phase initial above the bar with more space
+    g.setColor(g.theme.fg);
+    g.setFontAlign(0, 1);
+    g.setFont("6x8", 1);
+    // Move the phase initial up a bit more for better spacing
+    g.drawString(dayPhases[i].name.substring(0, 1), xPos + segmentWidth/2, barY - 4);
+    
+    // Rest of your existing drawing code for the segments...
     if (i > currentPhaseIndex || (i === dayPhases.length - 1 && currentPhaseIndex === 0)) {
-      // Draw phase initial above the bar
-      g.setColor(g.theme.fg);
-      g.setFontAlign(0, 1);
-      g.setFont("6x8", 1);
-      g.drawString(dayPhases[i].name.substring(0, 1), xPos + segmentWidth/2, barY - 2);
-      
-      // Draw with reduced opacity
       g.setColor(dayPhases[i].color);
-      g.setColor(g.blendColor(g.getColor(), g.theme.bg, 0.7)); // 30% less opacity
+      g.setColor(g.blendColor(g.getColor(), g.theme.bg, 0.7));
       g.fillRect(xPos, barY, xPos + segmentWidth, barY + barHeight);
     } else if (i < currentPhaseIndex) {
-      // Draw phase initial above the bar
-      g.setColor(g.theme.fg);
-      g.setFontAlign(0, 1);
-      g.setFont("6x8", 1);
-      g.drawString(dayPhases[i].name.substring(0, 1), xPos + segmentWidth/2, barY - 2);
-      
-      // Draw with full opacity
       g.setColor(dayPhases[i].color);
       g.fillRect(xPos, barY, xPos + segmentWidth, barY + barHeight);
     } else if (i === currentPhaseIndex) {
-      // Current phase - draw partially filled
       const progressWidth = Math.floor(segmentWidth * progress);
-      
-      // Draw phase initial above the bar
-      g.setColor(g.theme.fg);
-      g.setFontAlign(0, 1);
-      g.setFont("6x8", 1);
-      g.drawString(dayPhases[i].name.substring(0, 1), xPos + segmentWidth/2, barY - 2);
-      
-      // Draw completed part with full opacity
       g.setColor(dayPhases[i].color);
       g.fillRect(xPos, barY, xPos + progressWidth, barY + barHeight);
-      
-      // Draw remaining part with reduced opacity
       g.setColor(dayPhases[i].color);
-      g.setColor(g.blendColor(g.getColor(), g.theme.bg, 0.7)); // 30% less opacity
+      g.setColor(g.blendColor(g.getColor(), g.theme.bg, 0.7));
       g.fillRect(xPos + progressWidth, barY, xPos + segmentWidth, barY + barHeight);
       
-      // Draw the arrow pointer at current position
+      // Draw the arrow pointer
       g.setColor(g.theme.fg);
       const arrowX = xPos + progressWidth;
       g.fillPoly([
