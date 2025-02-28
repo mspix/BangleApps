@@ -4,7 +4,7 @@
     "shortName": "Day Phase",
     "version": "0.01",
     "description": "Shows time, date, and a progress bar indicating the current phase of the day",
-    "icon": "app.png",
+    "icon": "app-icon.js",
     "type": "clock",
     "tags": "clock,tool",
     "supports": [
