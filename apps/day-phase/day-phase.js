@@ -86,7 +86,7 @@ function drawProgressBar(date) {
   
   const barWidth = 160;  // Increased from 140 to use more screen width
   const barHeight = 16;
-  const barY = 130;
+  const barY = 140;
   const barX = (176 - barWidth) / 2; // Center horizontally
   
   g.clearRect(0, barY - 20, 176, barY + 50); // Clear the bar area and text
@@ -170,19 +170,19 @@ function drawTimeAndDate() {
   
   // Draw time with Anton font
   g.setFontAlign(0, 0);
-  g.setFontAnton(0.7); // Scale down the Anton font
+  g.setFontAnton(0.7);
   const hours = date.getHours().toString().padStart(2, '0');
   const minutes = date.getMinutes().toString().padStart(2, '0');
-  // Move time down from 45 to 60 (below widget area)
-  g.drawString(`${hours}:${minutes}`, 88, 60);
+  // Move time down from 60 to 70
+  g.drawString(`${hours}:${minutes}`, 88, 70);
   
   // Draw date
   g.setFont("6x8", 2);
   const day = date.getDate().toString().padStart(2, '0');
   const month = (date.getMonth() + 1).toString().padStart(2, '0');
   const year = date.getFullYear();
-  // Move date down from 85 to 95 to maintain spacing with time
-  g.drawString(`${day}.${month}.${year}`, 88, 100);
+  // Move date down from 100 to 110
+  g.drawString(`${day}.${month}.${year}`, 88, 110);
   
   // Draw the progress bar
   drawProgressBar(date);
