@@ -203,21 +203,30 @@ function updateDisplay() {
 function init() {
   // Clear the screen and draw initial display
   g.clear();
-  Bangle.setUI("clock");
+  
+  // Only set up Bangle.js specific features if we're on the device
+  if (global.Bangle) {
+    Bangle.setUI("clock");
+    
+    // Update on screen wake
+    Bangle.on('lcdPower', (on) => {
+      if (on) updateDisplay();
+    });
+  }
+  
   updateDisplay();
   
   // Set up timer to update every minute
   setInterval(updateDisplay, 60000);
-  
-  // Update on screen wake
-  Bangle.on('lcdPower', (on) => {
-    if (on) updateDisplay();
-  });
 }
 
-// Load widgets
-Bangle.loadWidgets();
-// Draw widgets
-Bangle.drawWidgets();
+// Only load and draw widgets if we're on the device
+if (global.Bangle) {
+  // Load widgets
+  Bangle.loadWidgets();
+  // Draw widgets
+  Bangle.drawWidgets();
+}
+
 // Start the app
 init(); 
