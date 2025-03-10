@@ -36,7 +36,7 @@ function getCurrentPhase(date) {
   const currentTimeInMinutes = currentHour * 60 + currentMin;
   
   // Find the current phase
-  let currentPhaseIndex = 0;
+  let currentPhaseIndex = dayPhases.length - 1; // Default to last phase
   for (let i = 0; i < dayPhases.length; i++) {
     const phaseStartTime = phaseStartInMinutes(dayPhases[i]);
     if (currentTimeInMinutes >= phaseStartTime) {
@@ -44,6 +44,18 @@ function getCurrentPhase(date) {
     } else {
       break;
     }
+  }
+  
+  // Special handling for midnight transition
+  // If we're at or after 22:00 (last Sleep phase) or before 07:00 (first Morning Routine),
+  // we're in a Sleep phase
+  if (currentTimeInMinutes >= phaseStartInMinutes(dayPhases[dayPhases.length - 1]) || 
+      currentTimeInMinutes < phaseStartInMinutes(dayPhases[1])) {
+    // If after 22:00, use the last phase index
+    // If before 07:00, use index 0
+    currentPhaseIndex = (currentTimeInMinutes >= phaseStartInMinutes(dayPhases[dayPhases.length - 1])) 
+      ? dayPhases.length - 1 
+      : 0;
   }
   
   return currentPhaseIndex;
