@@ -85,7 +85,7 @@ function getPhaseProgress(date, phaseIndex) {
 function handlePhaseTransition(currentPhaseIndex) {
   if (lastPhaseIndex !== currentPhaseIndex) {
     // Phase has changed, trigger vibration
-    Bangle.buzz(850); // Vibrate for 1 second
+    Bangle.buzz(500); // Vibrate for half of second
     lastPhaseIndex = currentPhaseIndex;
   }
 }
